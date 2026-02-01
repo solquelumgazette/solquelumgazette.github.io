@@ -1,8 +1,474 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Solquelum Gazette | Official State Records</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://solquelum.github.io/gazette/favicon%20(1).png">
+
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --glass: rgba(255, 255, 255, 0.08);
+            --glass-hover: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --accent: #ffd700;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background: url('https://solquelum.github.io/gazette/bg.png') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(16, 24, 32, 0.4), rgba(0, 0, 0, 0.6));
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        header {
+            width: 100%;
+            max-width: 800px;
+            padding: 60px 20px 40px;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .state-logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 24px;
+            filter: drop-shadow(0 4px 15px rgba(0,0,0,0.5));
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        .gazette-title {
+            font-weight: 900;
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            letter-spacing: -0.05em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            animation: slideUp 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .gazette-subtitle {
+            font-weight: 400;
+            font-size: 0.85rem;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            animation: slideUp 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 800px;
+            padding: 0 20px 80px;
+            z-index: 10;
+        }
+
+        .glass-accordion {
+            margin-bottom: 16px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: fadeIn 1s ease-out forwards;
+            opacity: 0;
+        }
+
+        .glass-accordion:hover {
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: scale(1.01);
+            background: var(--glass-hover);
+        }
+
+        .accordion-header {
+            width: 100%;
+            padding: 24px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .accordion-header span {
+            font-weight: 600;
+            font-size: 1.05rem;
+            letter-spacing: -0.01em;
+        }
+
+        .chevron {
+            font-size: 0.8rem;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0.5;
+        }
+
+        .glass-accordion.active .chevron {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass-accordion.active .accordion-content {
+            max-height: 1000px;
+        }
+
+        .records-list {
+            list-style: none;
+            padding: 8px 32px 32px;
+        }
+
+        .record-item {
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .record-item:last-child {
+            border-bottom: none;
+        }
+
+        .record-link {
+            text-decoration: none;
+            color: var(--text-primary);
+            display: block;
+        }
+
+        .record-label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+            transition: color 0.2s;
+        }
+
+        .record-link:hover .record-label {
+            color: var(--accent);
+        }
+
+        .record-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 60px 20px 80px;
+            text-align: center;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .footer-seal-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0.8;
+        }
+
+        .footer-seal {
+            width: 40px;
+            height: auto;
+            filter: drop-shadow(0 2px 10px rgba(0,0,0,0.5));
+        }
+
+        .footer-kingdom-name {
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-primary);
+        }
+
+        .footer-motto {
+            letter-spacing: 0.5em;
+            font-weight: 500;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .glass-accordion:nth-child(n) { animation-delay: 0.1s; }
+
+        @media (max-width: 600px) {
+            .accordion-header { padding: 20px; }
+            .records-list { padding: 0 20px 20px; }
+            .gazette-title { font-size: 1.8rem; }
+            .main-container { max-width: 100%; margin: 0; }
+            .footer-seal-group { flex-direction: column; gap: 8px; }
+        }
+    </style>
+</head>
 <body>
 
-<h1>My First Heading</h1>
-<p>My first paragraph.</p>
+    <header>
+        <img src="https://solquelum.github.io/gazette/bg%20(2).png" alt="Solquelum State Logo" class="state-logo">
+        <div class="gazette-title">The Solquelum Gazette</div>
+        <div class="gazette-subtitle">Official State Records of the Kingdom</div>
+    </header>
 
+    <main class="main-container">
+        
+        <!-- Category 1 -->
+        <div class="glass-accordion" onclick="toggleAccordion(this)">
+            <div class="accordion-header">
+                <span>Constitutional and Fundamental Laws</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="accordion-content">
+                <div class="records-list">
+                    <div class="record-item">
+                        <a href="constitution.html" class="record-link">
+                            <span class="record-label">The 2024 Solquelum Constitution</span>
+                            <span class="record-desc">The supreme law governing sovereignty, rights, and governmental structure.</span>
+                        </a>
+                    </div>
+                    <div class="record-item">
+                        <a href="amendments.html" class="record-link">
+                            <span class="record-label">Constitutional Amendments</span>
+                            <span class="record-desc">Formal changes granted Royal Assent.</span>
+                        </a>
+                    </div>
+                    <div class="record-item">
+                        <a href="legal-codes.html" class="record-link">
+                            <span class="record-label">National Legal Codes</span>
+                            <span class="record-desc">Electoral, Governance, Penal, and Tax Codes.</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category 2 -->
+        <div class="glass-accordion" onclick="toggleAccordion(this)">
+            <div class="accordion-header">
+                <span>Royal Acts and Legislative Enactments</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="accordion-content">
+                <div class="records-list">
+                    <div class="record-item">
+                        <a href="royal-decrees.html" class="record-link">
+                            <span class="record-label">Royal Decrees</span>
+                            <span class="record-desc">Binding acts including Decree No. 003 (Santanilla Festival).</span>
+                        </a>
+                    </div>
+                    <div class="record-item">
+                        <a href="proclamations.html" class="record-link">
+                            <span class="record-label">Proclamations</span>
+                            <span class="record-desc">Official announcements on recognitions and ceremonial matters.</span>
+                        </a>
+                    </div>
+                    <div class="record-item">
+                        <a href="executive-orders.html" class="record-link">
+                            <span class="record-label">Executive Orders</span>
+                            <span class="record-desc">Urgent directives addressing immediate governance.</span>
+                        </a>
+                    </div>
+                    <div class="record-item">
+                        <a href="bills.html" class="record-link">
+                            <span class="record-label">Enacted Bills and Ordinances</span>
+                            <span class="record-desc">Laws passed by the Assembly and endorsed by the King.</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category 3: Diplomatic Documents -->
+        <div class="glass-accordion" onclick="toggleAccordion(this)">
+            <div class="accordion-header">
+                <span>Diplomatic Documents</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="accordion-content">
+                <div class="records-list">
+                    <div class="record-item">
+                        <a href="diplomatic-agreements.html" class="record-link">
+                            <span class="record-label">Diplomatic Agreements</span>
+                            <span class="record-desc">Formal treaties and protocols established between the Kingdom of Solquelum and other micronational entities.</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category 4 -->
+        <div class="glass-accordion" onclick="toggleAccordion(this)">
+            <div class="accordion-header">
+                <span>Electoral and Administrative Records</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="accordion-content">
+                <div class="records-list">
+                    <div class="record-item">
+                        <a href="election-results.html" class="record-link">
+                            <span class="record-label">Official Election Results</span>
+                            <span class="record-desc">Definitive results for national and provincial elections.</span>
+                        </a>
+                    </div>
+                    <div class="record-item">
+                        <a href="candidate-lists.html" class="record-link">
+                            <span class="record-label">Preliminary Candidate Lists</span>
+                            <span class="record-desc">Review and challenge periods for Certificates of Candidacy.</span>
+                        </a>
+                    </div>
+                    <div class="record-item">
+                        <a href="structural-adjustments.html" class="record-link">
+                            <span class="record-label">Provincial Structural Adjustments</span>
+                            <span class="record-desc">Leadership changes triggered by demographic growth.</span>
+                        </a>
+                    </div>
+                    <div class="record-item">
+                        <a href="vacancy.html" class="record-link">
+                            <span class="record-label">Certifications of Vacancy</span>
+                            <span class="record-desc">Notices regarding disqualification or incapacity.</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category 5 -->
+        <div class="glass-accordion" onclick="toggleAccordion(this)">
+            <div class="accordion-header">
+                <span>Performance and Transparency Reports</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="accordion-content">
+                <div class="records-list">
+                    <div class="record-item">
+                        <a href="assembly-performance.html" class="record-link">
+                            <span class="record-label">Assembly Performance Reports</span>
+                            <span class="record-desc">Records of attendance, legislation, and budget allocations.</span>
+                        </a>
+                    </div>
+                    <div class="record-item">
+                        <a href="provincial-updates.html" class="record-link">
+                            <span class="record-label">Provincial Updates</span>
+                            <span class="record-desc">Quarterly local development reports.</span>
+                        </a>
+                    </div>
+                    <div class="record-item">
+                        <a href="implementation.html" class="record-link">
+                            <span class="record-label">Royal Implementation Reports</span>
+                            <span class="record-desc">Execution status of ongoing decrees and orders.</span>
+                        </a>
+                    </div>
+                    <div class="record-item">
+                        <a href="audits.html" class="record-link">
+                            <span class="record-label">Personnel Audits</span>
+                            <span class="record-desc">Statistics and misconduct investigations of government personnel.</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category 6 -->
+        <div class="glass-accordion" onclick="toggleAccordion(this)">
+            <div class="accordion-header">
+                <span>Regulatory Registries and Compliance Lists</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="accordion-content">
+                <div class="records-list">
+                    <div class="record-item">
+                        <a href="offense-registry.html" class="record-link">
+                            <span class="record-label">Electoral Offense Registry</span>
+                            <span class="record-desc">Entities found guilty of electoral misconduct.</span>
+                        </a>
+                    </div>
+                    <div class="record-item">
+                        <a href="tax-compliance.html" class="record-link">
+                            <span class="record-label">Non-Compliant Entity Register</span>
+                            <span class="record-desc">Business and individuals with revoked permits or tax debts.</span>
+                        </a>
+                    </div>
+                    <div class="record-item">
+                        <a href="nrge.html" class="record-link">
+                            <span class="record-label">National Registry of Government Employees (NRGE)</span>
+                            <span class="record-desc">Tracking appointments and conduct records.</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="footer-seal-group">
+            <img src="https://solquelum.github.io/gazette/solquelum%20no%20bg.png" alt="Seal of the Kingdom" class="footer-seal">
+            <span class="footer-kingdom-name">The Kingdom of Solquelum</span>
+        </div>
+        <div class="footer-motto">Resurgens Cum Aurora</div>
+    </footer>
+
+    <script>
+        function toggleAccordion(element) {
+            const isActive = element.classList.contains('active');
+            
+            document.querySelectorAll('.glass-accordion').forEach(acc => {
+                acc.classList.remove('active');
+            });
+
+            if (!isActive) {
+                element.classList.add('active');
+            }
+        }
+    </script>
 </body>
 </html>
